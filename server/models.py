@@ -21,11 +21,13 @@ class Hero(db.Model, SerializerMixin):
 
     herovillains = db.relationship("HeroVillain", back_populates='hero')
     # want to be able to write hero1.villains and show all the associations
-    # villains = association_proxy('the middle bridge', 'relationship variable')
+    # villains = association_proxy('the middle bridge relationship', 'relationship variable/endpoint')
     villains = association_proxy('herovillains', 'villain')
 
     # prevent recursion, so use serialize_rules ('- do not give me this!'). takes iterable, so list or tuple. don't bounce back '-herovillains.SELF'
-    serialize_rules = ('-heroesvillains.hero',)
+    '''serialize_rules = ('-herovillains.hero',)'''
+    # restructure the code to be more like heroes: {"villains": []}
+    serialize_rules = ('-herovillains', 'villains', '-villains.heroes', '-villains.herovillains')
 
     # def to_dict(self):
     #     return {
@@ -48,7 +50,7 @@ class Villain(db.Model, SerializerMixin):
     herovillains = db.relationship("HeroVillain", back_populates="villain")
     heroes = association_proxy('herovillains', 'hero')
 
-    serialize_rules = ('-herotovillains.villain', )
+    serialize_rules = ('-herovilllains.villain',)
 
     # def to_dict_with_heroes(self):
     #     return {
@@ -72,4 +74,5 @@ class HeroVillain(db.Model, SerializerMixin):
     hero = db.relationship("Hero", back_populates='herovillains')
     villain = db.relationship("Villain", back_populates='herovillains')
 
-    serialize_rules = ('-hero.herovillains', '-.villain.herovillains')
+    # because this table is connected to two tables. "when you go to hero, don't come back to herovillains + when you go to villain, don't come back to herovillains"
+    serialize_rules = ('-hero.herovillains','-villain.herovillains')
