@@ -30,7 +30,7 @@ def debug():
 def create_villain():
     # imported from Flask. request object(headers, status code, but more specifically, we're asking for the JSON)
     villain_data = request.json
-    print(villain_data)
+    # print(villain_data)
 
     # rebuild Villain w the data
     villain = Villain(name=villain_data["name"], secret_lair=villain_data["secret_lair"], childhood_trauma=villain_data["childhood_trauma"])
@@ -59,6 +59,7 @@ def hero_by_id(id: int):
 @app.get('/villains')
 def all_villains():
     villains = Villain.query.all()
+    # print(villains)
     return [villain.to_dict(rules=("-herovillains",)) for villain in villains], 200
 
 @app.get('/villains/<int:id>')
@@ -78,7 +79,7 @@ def update_villain(id):
     Villain.query.filter(Villain.id == id).update(data_to_update)
     db.session.commit()
 
-    villain = Villain.query.filter(Villain.id == id)
+    villain = Villain.query.filter(Villain.id == id).first()
 
     return villain.to_dict(), 202
 

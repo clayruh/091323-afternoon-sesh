@@ -50,7 +50,7 @@ class Villain(db.Model, SerializerMixin):
     herovillains = db.relationship("HeroVillain", back_populates="villain")
     heroes = association_proxy('herovillains', 'hero')
 
-    serialize_rules = ('-herovilllains.villain',)
+    serialize_rules = ('-herovilllains.villain', '-herovillains.hero.villains', '-herovillains.villain_id')
 
     # def to_dict_with_heroes(self):
     #     return {
